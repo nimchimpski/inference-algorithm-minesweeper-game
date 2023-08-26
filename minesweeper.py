@@ -152,7 +152,7 @@ class MinesweeperAI():
     """
     Minesweeper game player
     """
-    print('\n/////sauasage')
+    print('\n/////START')
 
     def __init__(self, height=8, width=8):
 
@@ -176,7 +176,7 @@ class MinesweeperAI():
         to mark that cell as a mine as well.
         """
         self.mines.add(cell)
-        print('*******added cell to mines')
+        print(F'*******added {cell} to mines')
         print('mines=', self.mines)
         for sentence in self.knowledge:
             sentence.mark_mine(cell)
@@ -190,7 +190,7 @@ class MinesweeperAI():
           
         """
         self.safes.add(cell)
-        ('+++added cell to  safe')
+        (F'+++added {cell} to  safe')
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
@@ -203,11 +203,11 @@ class MinesweeperAI():
         print(f"+++adding knowledge for move: cell= {cell} count= {count}")
         # 1) mark the cell as a move that has been made
         self.moves_made.add(cell)
-        print('moves made', self.moves_made)
+        print('moves made=', self.moves_made)
 
         # 2) mark the cell as safe
         self.safes.add(cell)
-        print('safes', self.safes)
+        print('safes=', self.safes)
 
         # 3) add a new sentence to the AI's knowledge base based on the value of `cell` and `count`
         cells=set()
@@ -219,26 +219,26 @@ class MinesweeperAI():
                     if 0 <= k < self.height and 0 <= l < self.width:
                         cells.add((k,l))
         sentence = Sentence(cells, count)
-        print('new sentence from move=', sentence)
+        # print('new sentence from move=', sentence)
         self.knowledge.append(sentence)
 
         # 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base.
         
         if self.knowledge:
-            print('len(self.kowledge)', len(self.knowledge))
+            # print('len(self.kowledge)', len(self.knowledge))
             # filter out empty sentences
             filteredknowledge = [sentence for sentence in self.knowledge if len(sentence.cells) > 0]
             self.knowledge = filteredknowledge
-            print('cleaned nulls len(self.kowledge)', len(self.knowledge))
+            # print('cleaned nulls len(self.kowledge)', len(self.knowledge))
             for sentence in self.knowledge:
                 print(sentence)
 
-            print('>>>LOOP check all sentences')
+            # print('>>>LOOP check all sentences')
             def sentencecheck():  
                 for sentence in self.knowledge:
                     print(f'//////checking sentence.cells= {sentence.cells}= count {sentence.count}')
                     if cell in sentence.cells:
-                        print(f'removing {cell} from sentence')
+                        # print(f'removing {cell} from sentence')
                         sentence.cells.remove(cell)
                     # remove moves made from sentence
                     sentence.mark_safe(cell)
@@ -253,7 +253,7 @@ class MinesweeperAI():
                         if sentence.count == 0:
                             print('count==0 so adding cells to  safes')
                             self.safes.update(sentence.cells)
-                            print('len(self.safes)', len(self.safes))
+                            # print('len(self.safes)', len(self.safes))
 
                         # implies mines?  add to mine list
                         if (len(sentence.cells) == sentence.count):
@@ -273,7 +273,7 @@ class MinesweeperAI():
         myknowledge = self.knowledge
 
         def findsubsetsinknowledge(myknowledge,  newsentence, i=0):
-            print('R: len(myknowledge) beg rec=', len(myknowledge))
+            print('RRRRRRRRR START R: len(myknowledge) beg rec=', len(myknowledge))
             for sentence in myknowledge:
                 print('kb>', sentence)
             # base case
@@ -288,10 +288,10 @@ class MinesweeperAI():
                 print('R: is subset')
                 # get remainder cells
                 newcells = myknowledge[i].cells.difference(newsentence.cells)
-                print('R: newcells', newcells)
+                # print('R: newcells', newcells)
                 # get remainder count
                 newcount = myknowledge[i].count - newsentence.count
-                print('R: newcount', newcount)
+                # print('R: newcount', newcount)
                 # make new sentence + add to knowledge
                 newsentence = Sentence(newcells, newcount)
                 print('newsentence.cells', newsentence.cells)
@@ -313,6 +313,7 @@ class MinesweeperAI():
         self.knowledge = uniqueknowledge
         print('------un sentencecheck-2')
         sentencecheck()
+        print('mines= ', self.mines)
 
         
 
@@ -351,16 +352,15 @@ class MinesweeperAI():
         for i in range(self.height):
             for j in range(self.width):
                 alloptions.add((i,j))
-        # print('len(alloptions)', len(alloptions))
+        print('len(alloptions)', len(alloptions))
         print('len(self.moves_made)', len(self.moves_made))
         print('len(self.mines)', len(self.mines))
         randomoptions = alloptions.difference( self.moves_made, self.mines)
-        # print('randomoptions', randomoptions)
+        print('randomoptions', randomoptions)
         print('len(randomoptions)', len(randomoptions))
         print('returning randommove')
         return random.choice(list(randomoptions))
     
     def Flagmines(self, flags):
-        # print('*****>self.mines', self.mines)
         flags.update(self.mines) 
         return flags
