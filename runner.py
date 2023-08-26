@@ -54,6 +54,10 @@ ai = MinesweeperAI(height=HEIGHT, width=WIDTH)
 # Keep track of revealed cells, flagged cells, and if a mine was hit
 revealed = set()
 flags = set()
+# flags.add((0,0))
+print('flags=', flags)
+print('len(flags)', len(flags))
+flags = ai.Flagmines(flags)
 lost = False
 
 # Show instructions initially
