@@ -4,9 +4,9 @@ import time
 
 from minesweeper import Minesweeper, MinesweeperAI, Sentence
 
-HEIGHT = 3
-WIDTH = 3
-MINES = 1
+HEIGHT = 5
+WIDTH = 5
+MINES = 3
 
 # Colors
 BLACK = (0, 0, 0)
@@ -57,14 +57,14 @@ flags = set()
 # flags.add((0,0))
 print('flags=', flags)
 print('len(flags)', len(flags))
-flags = ai.Flagmines(flags)
+
 lost = False
 
 # Show instructions initially
 instructions = True
 
 while True:
-
+    
     # Check if game quit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -143,6 +143,7 @@ while True:
 
             row.append(rect)
         cells.append(row)
+    flags = ai.Flagmines(flags)
 
     # AI Move button
     aiButton = pygame.Rect(
@@ -229,8 +230,10 @@ while True:
         if game.is_mine(move):
             lost = True
         else:
+            
             nearby = game.nearby_mines(move)
             revealed.add(move)
             ai.add_knowledge(move, nearby)
+            
 
     pygame.display.flip()

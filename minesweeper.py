@@ -124,7 +124,11 @@ class Sentence():
         if cell in self.cells:
         #If cell is in the sentence, the function should update the sentence so that cell is no longer in the sentence, but still represents a logically correct sentence given that cell is known to be a mine.
             self.cells.remove(cell)
+            self.count -=1
         #If cell is not in the sentence, then no action is necessary.
+            return True
+        else:
+            return False
 
         
         
@@ -138,8 +142,10 @@ class Sentence():
         if cell in self.cells:
         #If cell is in the sentence, the function should update the sentence so that cell is no longer in the sentence, but still represents a logically correct sentence given that cell is known to be safe.
             self.cells.remove(cell)
+            return True
         #If cell is not in the sentence, then no action is necessary.
-      
+        else:
+            return False
 
 
 class MinesweeperAI():
@@ -197,7 +203,7 @@ class MinesweeperAI():
         print(f"+++adding knowledge for move: cell= {cell} count= {count}")
         # 1) mark the cell as a move that has been made
         self.moves_made.add(cell)
-        # print('moves made', self.moves_made)
+        print('moves made', self.moves_made)
 
         # 2) mark the cell as safe
         self.safes.add(cell)
@@ -217,43 +223,54 @@ class MinesweeperAI():
         self.knowledge.append(sentence)
 
         # 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base.
-
-        if self.knowledge:
-            print('>>>LOOP check all sentences')
-            for sentence in self.knowledge:
-                print(f'checking sentence.cells= {sentence.cells}= count {sentence.count}')
-                if cell in sentence.cells:
-                    print(f'removing {cell} from sentence')
-                    sentence.cells.remove(cell)
-
-                # remove moves made from sentence
-                sentence.cells = sentence.cells.difference(self.moves_made)
-                print('sentence.cells w/o moves', sentence.cells)
-
-                # implies safes? add to safes list
-                if sentence.count == 0:
-                    print('count==0 so adding cells to  safes')
-                    self.safes.update(sentence.cells)
-                    print('len(self.safes)', len(self.safes))
-
-                # implies mines?  add to mine list
-                
-                if len(sentence.cells) == sentence.count:
-                    print('*****sentence.count', sentence.count)
-                    print('*******len(sentence.cells)', len(sentence.cells))
-                    self.mines.update(cells)
-                    print('*******found mines. =', self.mines)
         
-            self.knowledge = [sentence for sentence in self.knowledge if len(sentence.cells) > 0]
+        if self.knowledge:
+            print('len(self.kowledge)', len(self.knowledge))
+            # filter out empty sentences
+            filteredknowledge = [sentence for sentence in self.knowledge if len(sentence.cells) > 0]
+            self.knowledge = filteredknowledge
+            print('cleaned nulls len(self.kowledge)', len(self.knowledge))
+            for sentence in self.knowledge:
+                print(sentence)
 
+            print('>>>LOOP check all sentences')
+            def sentencecheck():  
+                for sentence in self.knowledge:
+                    print(f'//////checking sentence.cells= {sentence.cells}= count {sentence.count}')
+                    if cell in sentence.cells:
+                        print(f'removing {cell} from sentence')
+                        sentence.cells.remove(cell)
+                    # remove moves made from sentence
+                    sentence.mark_safe(cell)
+                    print('sentence.cells w/o moves', sentence.cells)
+
+                    # remove known mines from sentence.cells
+                    for mine in self.mines:
+                        sentence.mark_mine(mine)
+
+                    if len(sentence.cells) > 0 :
+                        # implies safes? add to safes list
+                        if sentence.count == 0:
+                            print('count==0 so adding cells to  safes')
+                            self.safes.update(sentence.cells)
+                            print('len(self.safes)', len(self.safes))
+
+                        # implies mines?  add to mine list
+                        if (len(sentence.cells) == sentence.count):
+                            print('*****sentence.count', sentence.count)
+                            print('*******len(sentence.cells)', len(sentence.cells))
+                            self.mines.update(sentence.cells)
+                            print('*******found mines. =', self.mines)
+
+                    
+        
+            print('------run sentencecheck-1')
+            sentencecheck()
                     
         
 
         # 5) add any new sentences to the AI's knowledge base if they can be inferred from existing knowledge
         myknowledge = self.knowledge
-        print('len(self.knowledge)=', len(self.knowledge))
-
-        print('len knowlege=', len(self.knowledge))
 
         def findsubsetsinknowledge(myknowledge,  newsentence, i=0):
             print('R: len(myknowledge) beg rec=', len(myknowledge))
@@ -290,7 +307,14 @@ class MinesweeperAI():
   
         print('+++starting recursive check for subsets')
         self.knowledge = findsubsetsinknowledge(myknowledge, sentence)
+        # remove doubles in knowledge
+        uniqueknowledge = []
+        [uniqueknowledge.append(sentence) for sentence in self.knowledge if sentence not in uniqueknowledge]
+        self.knowledge = uniqueknowledge
+        print('------un sentencecheck-2')
+        sentencecheck()
 
+        
 
 
     def make_safe_move(self):
@@ -303,10 +327,12 @@ class MinesweeperAI():
         and self.moves_made, but should not modify any of those values.***
         """
         print('\n+++in safemove fn')
+        print('self.safes', self.safes)
+        print('self.moves_made', self.moves_made)
         unplayedsafes=self.safes-self.moves_made
         if len(unplayedsafes) != 0:
-            # print('unplayedsafes= ',unplayedsafes)
-            # print('returning safe move', random.choice(list(unplayedsafes)))
+            print('unplayedsafes= ',unplayedsafes)
+            print('returning safe move', random.choice(list(unplayedsafes)))
             return random.choice(list(unplayedsafes))
         else:
             print('return no safes')
@@ -335,6 +361,6 @@ class MinesweeperAI():
         return random.choice(list(randomoptions))
     
     def Flagmines(self, flags):
-        print('*****>self.mines', self.mines)
+        # print('*****>self.mines', self.mines)
         flags.update(self.mines) 
         return flags
