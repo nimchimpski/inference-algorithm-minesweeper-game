@@ -2,7 +2,7 @@ import pygame
 import sys
 import time
 
-from minesweeper import Minesweeper, MinesweeperAI
+from minesweeper import Minesweeper, MinesweeperAI, Sentence
 
 HEIGHT = 8
 WIDTH = 8
@@ -39,11 +39,13 @@ mine = pygame.transform.scale(mine, (cell_size, cell_size))
 
 # Create game and AI agent
 game = Minesweeper(height=HEIGHT, width=WIDTH, mines=MINES)
-print(">>>game")
-print(">>>game.print= " , game.print())
-print(">>>game.is_mine(0,0)= ", game.is_mine((0,0)))
-print(">>>game.nearby_mines(0,0)= ", game.nearby_mines((0,0)))
-print(">>>game.board[0][0]= ", game.board[0][0])
+# print(">>>game")
+# print(">>>game.print= " , game.print())
+# print(">>>game.is_mine(0,0)= ", game.is_mine((0,0)))
+# print(">>>game.nearby_mines(0,0)= ", game.nearby_mines((0,0)))
+# print(">>>game.board[0][0]= ", game.board[0][0])
+# testsent = Sentence((3,3), 1)
+# print(">>>testcell= ", testsent.known_mines)
 
 
 
