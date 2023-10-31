@@ -126,9 +126,7 @@ class Sentence():
             self.cells.remove(cell)
             self.count -=1
         #If cell is not in the sentence, then no action is necessary.
-            return True
-        else:
-            return False
+        
 
         
         
@@ -142,10 +140,9 @@ class Sentence():
         if cell in self.cells:
         #If cell is in the sentence, the function should update the sentence so that cell is no longer in the sentence, but still represents a logically correct sentence given that cell is known to be safe.
             self.cells.remove(cell)
-            return True
+            
         #If cell is not in the sentence, then no action is necessary.
-        else:
-            return False
+      
 
 
 class MinesweeperAI():
@@ -233,7 +230,6 @@ class MinesweeperAI():
             for sentence in self.knowledge:
                 print(sentence)
 
-            # print('>>>LOOP check all sentences')
             def sentencecheck():  
                 for sentence in self.knowledge:
                     print(f'//////checking sentence.cells= {sentence.cells}= count {sentence.count}')
